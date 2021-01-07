@@ -29,7 +29,6 @@
     }
 
     function getFrom(grade) {
-        console.log(grade, grades.filter(g => g.value === grade + 1))
         const from = grade === grades.length ? 0 : (+grades.filter(g => g.value === grade + 1)[0].to) + 0.5;
         return from === 0.5 ? '' : from;
     }
