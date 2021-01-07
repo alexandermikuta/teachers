@@ -3,18 +3,18 @@
     import Chart from "./GradeChart.svelte";
 
     let grades = [
-        { value: 1, from: 50, to: 60 },
-        { value: 2, from: 40, to: 49.5 },
-        { value: 3, from: 30, to: 39.5 },
-        { value: 4, from: 20, to: 29.5 },
-        { value: 5, from: 10, to: 19.5 },
-        { value: 6, from: 0, to: 9.5 },
+        { value: 1, to: 60 },
+        { value: 2, to: 49.5 },
+        { value: 3, to: 39.5 },
+        { value: 4, to: 29.5 },
+        { value: 5, to: 19.5 },
+        { value: 6, to: 9.5 },
     ];
     let points = [];
 
     function getGrade(tmpGrades, points) {
         let matchingGrade = tmpGrades.find(
-            (g) => g.from <= points && g.to >= points
+            (g) => getFrom(g.value) <= points && g.to >= points
         );
         return matchingGrade ? matchingGrade.value : undefined;
     }
@@ -28,6 +28,12 @@
         return steps;
     }
 
+    function getFrom(grade) {
+        console.log(grade, grades.filter(g => g.value === grade + 1))
+        const from = grade === grades.length ? 0 : (+grades.filter(g => g.value === grade + 1)[0].to) + 0.5;
+        return from === 0.5 ? '' : from;
+    }
+
     function plus(pointStep) {
         points = [...points, pointStep];
     }
@@ -39,7 +45,7 @@
     }
 
     $: pointRange = {
-        from: Math.min(...grades.map((g) => g.from)),
+        from: Math.min(...grades.map((g) => getFrom(g.value))),
         to: Math.max(...grades.map((g) => g.to)),
     };
     $: notes = points.map((p) => getGrade(grades, p));
@@ -74,7 +80,7 @@
             {#each grades as grade}
                 <p>
                     <b>{grade.value}:</b>
-                    <input placeholder="Von" bind:value={grade.from} />
+                    <input placeholder="Von" value={getFrom(grade.value)} disabled/> - 
                     <input placeholder="Bis" bind:value={grade.to} />
                 </p>
             {/each}
